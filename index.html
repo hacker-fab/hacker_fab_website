@@ -1,0 +1,127 @@
+
+<html>
+<head>
+<meta name="description" content="hacker fab - the open source semiconductor fab."/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="keywords" content="hacker fab, semiconductor fabrication, open source, chip manufacturing, fab project, chips, hardware, open source chips, open source fab, the hacker fab">
+<meta name="author" content="Hacker Fab Project">
+<meta property="og:title" content="hacker fab - the open source semiconductor fab">
+<meta property="og:description" content="the open source semiconductor fab">
+<meta property="og:type" content="website">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://hackerfab.org">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+	body { 
+	  line-height: 1.4;
+	    font-size: 16px;
+	    padding: 0 10px;
+	    margin: 50px auto;
+	    max-width: 650px;
+	}
+
+	#maincontent
+	{
+	max-width:42em;margin:15 auto;
+	}
+
+	/* minimal map */
+	#map { width: 100%; aspect-ratio: 16 / 9; min-height: 360px; border: 1px solid #ddd; background: #fff; }
+	.x-icon { color: #d00; font-weight: 900; font-size: 22px; line-height: 16px; text-shadow: 0 0 2px #fff; }
+	.leaflet-control-zoom { display: none; }
+	.leaflet-container { background: #fff; }
+	.leaflet-control-attribution { font-size: 10px; }
+</style>
+	
+<title>the hacker fab</title>
+</head>
+
+
+<body>
+<div id="maincontent" style="margin-top:70px">
+  <h1>hacker fab</h1>
+
+	<p>The open source semiconductor fab</p>
+
+	<div style="text-align: center;">
+		<p>Read the <a href="http://docs.hackerfab.org">Docs</a></p>
+		<p>Join the <a href="https://discord.gg/hacker-fab-1143959339179200562">Discord</a></p>
+		<p>Follow on <a href="https://x.com/TheHackerFab">X</a></p>
+	</div>
+
+	<h2>are you near a fab?</h2>
+	<p>The hacker fab was <a href="https://docs.hackerfab.org/home/#background-and-licensing">started</a> at the <a href="https://hackerfab.ece.cmu.edu/">Carnegie Mellon</a> ECE department in Jan 2023</p>
+	<p>You don't need a fab to contribute, but many more people are building them.</p>
+	
+	<ul>
+		<li><a href="https://waterloofab.com/">Waterloo</a></li>
+		<li>Ohio State</li>
+		<li>UC Irvine</li>
+		<li>WUST (Poland)</li>
+	</ul>
+
+	<div id="map"></div>
+
+	<p>If not, <a href="https://docs.google.com/document/d/1yjYssISx5oo4HYTgxVZPeUrk2zh5CimDKoNpX2rgk4I/edit">start your own!</a></p>
+	
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+	// minimal map with fast smooth scroll zoom
+	const map = L.map('map', {
+		zoomControl: false,
+		doubleClickZoom: false,
+		boxZoom: false,
+		keyboard: false,
+		scrollWheelZoom: true,
+		wheelDebounceTime: 0.1,
+		wheelPxPerZoomLevel: 40,
+		zoomAnimationThreshold: 5,
+		zoomAnimation: false,
+		zoomAnimationDuration: 0.01,
+	}).setView([20, 0], 2);
+	
+	// Make zoom animations faster
+	map.options.zoomAnimation = true;
+	map.options.zoomAnimationThreshold = 20;
+
+	// Simple white background with clean black borders
+	L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+		attribution: '© OpenStreetMap contributors © CARTO',
+		subdomains: 'abcd'
+	}).addTo(map);
+
+	function addFab(lat, lon, label) {
+		const m = L.circleMarker([lat, lon], {
+			radius: 7,
+			color: '#000',
+			weight: 2,
+			fill: true,
+			fillColor: '#000',
+			fillOpacity: 1
+		}).addTo(map);
+		if (label) { m.bindTooltip(label, { direction: 'top', offset: [0, -6] }); }
+		return m;
+	}
+
+	// Edit this list to add/remove locations
+	const fabs = [
+		{ name: 'Carnegie Mellon', lat: 40.44331372285568, lon: -79.94222201775203 },
+		{ name: 'Waterloo', lat: 43.47237101698956, lon: -80.54438553494519 },
+		{ name: 'Ohio State', lat: 40.0063124921417, lon: -83.02737553372273 },
+		{ name: 'UC Irvine', lat: 33.64737567524453, lon: -117.84098960046727 },
+		{ name: 'WUST (Poland)', lat: 51.107686178038584, lon: 17.062537338602773 }
+	];
+	// Add markers and fit map to show all locations
+	const markers = [];
+	fabs.forEach(f => {
+		const marker = addFab(f.lat, f.lon, f.name);
+		markers.push(marker);
+	});
+	
+	// Fit map bounds to show all markers with padding
+	if (markers.length > 0) {
+		const group = new L.featureGroup(markers);
+		map.fitBounds(group.getBounds(), { padding: [20, 20] });
+	}
+</script>
+</body>
