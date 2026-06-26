@@ -92,13 +92,14 @@
 		subdomains: 'abcd'
 	}).addTo(map);
 
-	function addFab(lat, lon, label) {
+	function addFab(lat, lon, label, color) {
+		const c = color || '#000';
 		const m = L.circleMarker([lat, lon], {
 			radius: 7,
-			color: '#000',
+			color: c,
 			weight: 2,
 			fill: true,
-			fillColor: '#000',
+			fillColor: c,
 			fillOpacity: 1
 		}).addTo(map);
 		if (label) { m.bindTooltip(label, { direction: 'top', offset: [0, -6] }); }
@@ -107,7 +108,7 @@
 
 	// Edit this list to add/remove locations
 	const fabs = [
-		{ name: 'Carnegie Mellon', lat: 40.44331372285568, lon: -79.94222201775203 },
+		{ name: 'Carnegie Mellon (the first hacker fab)', lat: 40.44331372285568, lon: -79.94222201775203, color: '#C41230' },
 		{ name: 'Waterloo', lat: 43.47237101698956, lon: -80.54438553494519 },
 		{ name: 'Ohio State', lat: 40.0063124921417, lon: -83.02737553372273 },
 		{ name: 'UC Irvine', lat: 33.64737567524453, lon: -117.84098960046727 },
@@ -117,7 +118,7 @@
 	// Add markers and fit map to show all locations
 	const markers = [];
 	fabs.forEach(f => {
-		const marker = addFab(f.lat, f.lon, f.name);
+		const marker = addFab(f.lat, f.lon, f.name, f.color);
 		markers.push(marker);
 	});
 	
